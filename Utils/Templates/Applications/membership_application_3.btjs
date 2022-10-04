@@ -1,0 +1,37 @@
+const { ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle } = require('discord.js');
+const FileBuilder = require("d:/Discord Projects/Deltis/Utils/FileBuilder");
+
+MEAFI
+{
+    __FCF:I__
+
+    const modal = new ModalBuilder()
+        .setCustomId('memapp_step3')
+        .setTitle('Membership Application (2/2)');
+
+    const uAgreement = new TextInputBuilder()
+        .setCustomId('iAgreement')
+        .setLabel("Do you agree to our Discord & In-game Rules?")
+        .setPlaceholder('Y/N')
+        .setMaxLength(1)
+        .setMinLength(1)
+        .setStyle(TextInputStyle.Short)
+        .setRequired(true);
+
+    const uHear = new TextInputBuilder()
+        .setCustomId('iHear')
+        .setLabel("How did you hear about us?")
+        .setMaxLength(50)
+        .setMinLength(2)
+        .setStyle(TextInputStyle.Short)
+        .setRequired(false);
+
+    const Row1 = new ActionRowBuilder().addComponents(uAgreement);
+    const Row2 = new ActionRowBuilder().addComponents(uHear);
+
+    modal.addComponents(Row1, Row2);
+
+    await FileBuilder.DebuildUFile("membership_application_2", interaction.channel.id, interaction.message.id, interaction.user.id);
+    await FileBuilder.BuildUFile("membership_application_4", interaction.channel.id, interaction.message.id, interaction.user.id);
+    await interaction.showModal(modal);
+}
