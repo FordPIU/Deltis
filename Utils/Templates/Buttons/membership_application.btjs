@@ -6,7 +6,7 @@ MEAFI
     __FCF:I__
 
     const modal = new ModalBuilder()
-        .setCustomId('memapp_step1')
+        .setCustomId('membership_application_2')
         .setTitle('Membership Application (1/2)');
 
     const uName = new TextInputBuilder()

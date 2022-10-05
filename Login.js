@@ -3,16 +3,29 @@ const { Client, GatewayIntentBits } = require('discord.js');
 const fs = require("fs");
 
 const { token, guildId } = require('./Config.json');
-const { DebuildMessage } = require('./Utils/FileBuilder');
-const Get = require("./Utils/Gets");
+
+const InitFolders = [
+	"./Managers",
+	"./Interactions"
+]
 
 // Create a new client instance
 const client = new Client({
 	intents: [
 		GatewayIntentBits.Guilds,
-		GatewayIntentBits.GuildMessages
+		GatewayIntentBits.GuildMessages,
 	]
 });
+
+// Init File Funct
+async function InitFile(FPath, client)
+{
+	let File = require(FPath);
+
+	File.Init(client);
+
+	console.log("Inited File: " + FPath);
+}
 
 // Wait for Client to be logged in and ready
 client.once('ready', () => {
@@ -30,29 +43,48 @@ client.once('ready', () => {
 			console.log(`Validated Server: ${guild.name}`);
 		}
 	});
-});
 
-// Interaction Phraser
-client.on('interactionCreate', async i => {
-	if (i.isChatInputCommand()) {
-		require('./Commands/' + i.commandName)(i);
+	// Init Extra Files
+	InitFolders.forEach(DPath => {
+		let FNames = fs.readdirSync(DPath);
 
-		console.log(`${i.user.tag} used command ${i.commandName}`);
+		for (const FName of FNames)
+		{
+			let FPath = `${DPath}/${FName}`;
 
-		return;
-	}
+			if (FName.includes(".js")) {
+				InitFile(FPath, client);
+			} else {
+				// Go 1 folder deeper
+				let FNames2 = fs.readdirSync(FPath);
 
-	if (i.isButton() && !(i.customId.includes('!B_BYPASS!'))) {
-		let Path = await Get.FilesPathFromInteraction(i.channel.id, i.message.id, i.customId);
+				for (const FName2 of FNames2)
+				{
+					let FPath2 = `${FPath}/${FName2}`;
 
-		if (fs.existsSync(Path)) {
-			require(Path)(i);
-		} else { DebuildMessage(i.channel.id, i.message.id); i.message.delete(); }
+					if (FName2.includes(".js")) {
+						InitFile(FPath2, client);
+					} else {
+						// Go 2 folders deeper
+						let FNames3 = fs.readdirSync(FPath2);
 
-		console.log(`${i.user.tag} clicked on button ${i.customId} from message ${i.message.id}.`);
+						for (const FName3 of FNames3)
+						{
+							let FPath3 = `${FPath2}/${FName3}`;
 
-		return;
-	}
+							if (FName3.includes(".js")) {
+								InitFile(FPath3, client);
+							} else {
+								// Go 3 folders deeper
+
+								// Unneeded for now.
+							}
+						}
+					}
+				}
+			}
+		}
+	});
 });
 
 // Login to Discord with your client's token

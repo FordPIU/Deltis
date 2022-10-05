@@ -16,7 +16,8 @@ const commands = [
 		.setDescription('What type of setup to do.')
 		.setRequired(true)
 		.addChoices(
-			{ name: 'Info', value: 'info' },
+			{ name: 'Info / Non-Members', value: 'infon' },
+			{ name: 'Info / Members', value: 'infom' },
 		))
 	.addChannelOption(option => option
 		.setName('channel')

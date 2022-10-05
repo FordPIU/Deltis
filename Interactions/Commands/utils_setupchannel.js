@@ -1,7 +1,17 @@
 const { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } = require('discord.js');
-const { BuildFile } = require('../Utils/FileBuilder');
+const IRegistry = require("d:/Discord Projects/Deltis/Managers/Interaction");
 
-module.exports = async function(interaction)
+exports.Init = async function()
+{
+    await IRegistry.RegisterInteraction("Commands",
+        "setupchannel",
+        "Setup Channel",
+        __filename,
+        "Call"
+    );
+}
+
+exports.Call = async function(interaction)
 {
     let Channel   = interaction.options.getChannel("channel");
     let Type      = interaction.options.getString("type");
@@ -19,7 +29,7 @@ module.exports = async function(interaction)
     let button = null;
 
     switch (Type) {
-        case "info":
+        case "infon":
             button = new ActionRowBuilder()
             .addComponents(
                 new ButtonBuilder()
@@ -33,9 +43,24 @@ module.exports = async function(interaction)
                     .setStyle(ButtonStyle.Danger),
 
                 new ButtonBuilder()
-                    .setCustomId('membership_application')
+                    .setCustomId('membershipapp_pt1_start')
                     .setLabel('Apply for Membership!')
                     .setStyle(ButtonStyle.Primary),
+            );
+            break;
+
+        case "infom":
+            button = new ActionRowBuilder()
+            .addComponents(
+                new ButtonBuilder()
+                    .setCustomId('discord_rules')
+                    .setLabel('Read our Discord Rules!')
+                    .setStyle(ButtonStyle.Danger),
+
+                new ButtonBuilder()
+                    .setCustomId('game_rules')
+                    .setLabel('Read our Server Rules!')
+                    .setStyle(ButtonStyle.Danger),
             );
             break;
     }
@@ -44,10 +69,10 @@ module.exports = async function(interaction)
     let embed = null;
 
     switch (Type) {
-        case "info":
+        case "infon":
             embed = new EmbedBuilder()
-            .setColor([0, 0, 100])
-            .setTitle('{Server Name}')
+            .setColor([0, 100, 0])
+            .setTitle('Off-Branch Roleplay')
             .setAuthor({ name: 'Community Information', iconURL: 'https://i.imgur.com/AfFp7pu.png' })
             .setDescription('A FiveM Community with a focus and passion for Realism.\n\n')
             .setThumbnail('https://i.imgur.com/AfFp7pu.png')
@@ -62,17 +87,22 @@ module.exports = async function(interaction)
             )
             .setTimestamp()
             break;
+
+        case "infom":
+            embed = new EmbedBuilder()
+            .setColor([0, 100, 0])
+            .setTitle('Off-Branch Roleplay')
+            .setAuthor({ name: 'Community Rules', iconURL: 'https://i.imgur.com/AfFp7pu.png' })
+            .setThumbnail('https://i.imgur.com/AfFp7pu.png')
+            .addFields(
+                { name: 'Use me to remind yourself of the rules if you forget.', value: '\u200B' },
+            )
+            .setTimestamp()
+            break;
     }
 
     // Send Message Type
-    let Message = await Channel.send({embeds: [embed], components:[button]});
-
-    // Build Button Files
-    button.components.forEach(comp => {
-        if (comp != null && comp.data != null && comp.data.custom_id != null) {
-            BuildFile(comp.data.custom_id, Channel.id, Message.id);
-        }
-    });
+    Channel.send({embeds: [embed], components:[button]});
 
     // Reply
     interaction.reply({content: "Success.", ephemeral: true});
