@@ -5,8 +5,26 @@ const { clientId, token } = require('./Config.json');
 
 async function Init() {
 const commands = [
+	//		ACTIVITY COMMANDS		\\
+	// Get Server Activity
+	new SlashCommandBuilder()
+	.setName('isactive')
+	.setDescription('Check if the server is active.')
+	.setDefaultMemberPermissions(PermissionFlagsBits.SendMessages),
+
+	// Set Server Activity
+	new SlashCommandBuilder()
+	.setName('setactive')
+	.setDescription('Set if the server is active.')
+	.setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages)
+	.addBooleanOption(option => option
+		.setName('active')
+		.setDescription('Is Server Active?')
+		.setRequired(true)),
+
+
 	//		SETUP COMMANDS		\\
-	// Setup Command
+	// Setup Channel Command
 	new SlashCommandBuilder()
 	.setName('setupchannel')
 	.setDescription('Set up a channel.')

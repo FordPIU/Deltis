@@ -1,10 +1,18 @@
 const { EmbedBuilder } = require('discord.js');
+const IRegistry = require("../Managers/Interaction");
 
-MEAFI
+exports.Init = async function()
 {
-    __FCF:I__
+    await IRegistry.RegisterInteraction("Buttons",
+        "game_rules",
+        "Game Rules",
+        __filename,
+        "Call"
+    );
+}
 
-    // Actual Code for this File.
+exports.Call = async function(interaction)
+{
     const rulesEmbed = new EmbedBuilder()
         .setColor([255, 255, 255])
         .setTitle('Server Rules')

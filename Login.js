@@ -6,7 +6,8 @@ const { token, guildId } = require('./Config.json');
 
 const InitFolders = [
 	"./Managers",
-	"./Interactions"
+	"./Buttons",
+	"./Commands",
 ]
 
 // Create a new client instance
@@ -85,6 +86,9 @@ client.once('ready', () => {
 			}
 		}
 	});
+
+	// Rich Presence
+	client.user.setPresence({activities: [{name: "Watching for applications..."}]});
 });
 
 // Login to Discord with your client's token

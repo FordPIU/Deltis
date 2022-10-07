@@ -1,5 +1,5 @@
 const { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } = require('discord.js');
-const IRegistry = require("d:/Discord Projects/Deltis/Managers/Interaction");
+const IRegistry = require("../Managers/Interaction");
 
 exports.Init = async function()
 {
@@ -73,9 +73,9 @@ exports.Call = async function(interaction)
             embed = new EmbedBuilder()
             .setColor([0, 100, 0])
             .setTitle('Off-Branch Roleplay')
-            .setAuthor({ name: 'Community Information', iconURL: 'https://i.imgur.com/AfFp7pu.png' })
+            .setAuthor({ name: 'Community Information', iconURL: 'https://cdn.discordapp.com/attachments/992961900323274762/1027336886500466688/9.pngg' })
             .setDescription('A FiveM Community with a focus and passion for Realism.\n\n')
-            .setThumbnail('https://i.imgur.com/AfFp7pu.png')
+            .setThumbnail('https://cdn.discordapp.com/attachments/992961900323274762/1027336886500466688/9.png')
             .addFields(
                 { name: '\u200B', value: '\u200B' },
                 { name: 'Running on QBCore', value: 'With a realistic economy, but in a non-grindy nature.\nWith plenty of idle income sources, not requiring you to be on.\n' },
@@ -92,8 +92,8 @@ exports.Call = async function(interaction)
             embed = new EmbedBuilder()
             .setColor([0, 100, 0])
             .setTitle('Off-Branch Roleplay')
-            .setAuthor({ name: 'Community Rules', iconURL: 'https://i.imgur.com/AfFp7pu.png' })
-            .setThumbnail('https://i.imgur.com/AfFp7pu.png')
+            .setAuthor({ name: 'Community Rules', iconURL: 'https://cdn.discordapp.com/attachments/992961900323274762/1027336886500466688/9.png' })
+            .setThumbnail('https://cdn.discordapp.com/attachments/992961900323274762/1027336886500466688/9.png')
             .addFields(
                 { name: 'Use me to remind yourself of the rules if you forget.', value: '\u200B' },
             )

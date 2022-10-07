@@ -1,7 +1,7 @@
 const { ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, ButtonBuilder, ButtonStyle, EmbedBuilder } = require('discord.js');
-const { guildId, appsChannel, appAcceptRoleGrant } = require("d:/Discord Projects/Deltis/Config.json");
-const IRegistry = require("d:/Discord Projects/Deltis/Managers/Interaction");
-const U = require("d:/Discord Projects/Deltis/Utils")
+const { guildId, appsChannel, appAcceptRoleGrant } = require("../Config.json");
+const IRegistry = require("../Managers/Interaction");
+const U = require("../Utils")
 
 let UserApplicationData = {};
 
@@ -349,10 +349,15 @@ exports.CallAccept = async function(interaction, client)
     });
 
     // Close Thread
-    interaction.message.thread.setLocked(true);
+    let thread = interaction.message.thread;
+    await thread.setLocked(true);
+    await thread.setArchived(true);
 
     // Grant Role
     User.roles.add(appAcceptRoleGrant, "Application Accepted.");
+
+    // Remove Hold
+    U.PStore_Remove("MembershipBlacklist", UserId)
 }
 
 exports.CallDeny = async function(interaction, client)
@@ -368,7 +373,9 @@ exports.CallDeny = async function(interaction, client)
     await User.send(`Your Membership Application has been Denied by <@${interaction.user.id}> for ${Reason}.\nYou may try again next week.`)
 
     // Close Thread
-    interaction.message.thread.setLocked(true);
+    let thread = interaction.message.thread;
+    await thread.setLocked(true);
+    await thread.setArchived(true);
 
     // Remove Buttons
     await interaction.message.edit({
@@ -376,7 +383,7 @@ exports.CallDeny = async function(interaction, client)
         components: []
     });
 
-    // Blacklist from Further Application Submissions for 1 week.
-    let ETime = Math.round(Date.now() / 1000) + 604800;
+    // Blacklist from Further Application Submissions for 2 Days.
+    let ETime = Math.round(Date.now() / 1000) + 172800;
     U.PStore_Set("MembershipBlacklist", UserId, {EndTime: ETime});
 }
