@@ -1,41 +1,60 @@
-const IActive = false;
+const { EmbedBuilder } = require('discord.js');
 const IRegistry = require("../Managers/Interaction");
+
+let ServerInfo = {
+    "ServerIP": "147.135.39.163", // CONST
+    "ServerActive": false, // FLEX
+}
+
+function ServerActivityString(bool)
+{
+    if (bool) { return "Active."; } else { return "Inactive."; }
+}
 
 exports.Init = async function()
 {
     await IRegistry.RegisterInteraction("Commands",
-        "isactive",
-        "Is Server Active",
+        "serverinfo",
+        "Server Information",
         __filename,
-        "GetActive"
+        "GetServerInfo"
     );
 
     await IRegistry.RegisterInteraction("Commands",
-        "setactive",
-        "Set Server Active",
+        "updateserverinfo",
+        "Set Server Info",
         __filename,
-        "SetActive"
+        "SetServerInfo"
     );
 }
 
-exports.GetActive = async function(interaction)
+exports.GetServerInfo = async function(interaction)
 {
-    if (IActive) {
-        interaction.reply({content: "Server is active!", ephemeral: true});
-    } else {
-        interaction.reply({content: "Server is inactive.", ephemeral: true});
-    }
+    let embed = new EmbedBuilder()
+        .setColor([255, 255, 255])
+        .setTitle('Server Info')
+        .addFields(
+            { name: 'Server IP',                value: ServerInfo.ServerIP.toString() },
+            { name: 'Server Activity',          value: ServerActivityString(ServerInfo.ServerActive) },
+        )
+        .setTimestamp()
+
+    interaction.reply({embeds: [embed], ephemeral: true});
 }
 
-exports.SetActive = async function(interaction)
+exports.SetServerInfo = async function(interaction)
 {
-    let InputActive = interaction.options.getBoolean('active');
+    let SubCommand = interaction.options.getSubcommand()
 
-    if (InputActive) {
-        IActive = true;
-        interaction.reply({content: "Successfully set the server to active.", ephemeral: true});
-    } else {
-        IActive = false;
-        interaction.reply({content: "Successfully set the server to inactive.", ephemeral: true});
+    if (SubCommand == "activity") {
+        let InputActive = interaction.options.getBoolean('active');
+
+        if (InputActive) {
+            ServerInfo.ServerActive = true;
+            interaction.reply({content: "Successfully set the server to active.", ephemeral: true});
+        } else {
+            ServerInfo.ServerActive = false;
+            interaction.reply({content: "Successfully set the server to inactive.", ephemeral: true});
+        }
     }
 }
