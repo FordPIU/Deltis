@@ -6,20 +6,14 @@ const { clientId, token } = require('./Config.json');
 async function Init() {
 const commands = [
 	//		SERVER COMMANDS		\\
-	// Get Server Activity
+	// Set Server Info
 	new SlashCommandBuilder()
-	.setName('serverinfo')
-	.setDescription('Get information on the status of the server.')
-	.setDefaultMemberPermissions(PermissionFlagsBits.SendMessages),
-
-	// Set Server Activity
-	new SlashCommandBuilder()
-	.setName('updateserverinfo')
+	.setName('setserver')
 	.setDescription('Set if the server is active.')
 	.setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
 	.addSubcommand(subcommand => subcommand
-		.setName('activity')
-		.setDescription('Set Server Activity')
+		.setName('active')
+		.setDescription('Set Server if the Server is Active.')
 		.addBooleanOption(option => option
 			.setName('active')
 			.setDescription('Is Server Active?')

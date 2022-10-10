@@ -1,5 +1,6 @@
 const fs = require("fs");
 const U = require("../Utils");
+const { MAINTENANCE_MODE, MAINTENANCE_IDS } = require("../Config.json")
 
 
 let Container = {};
@@ -10,9 +11,30 @@ Container.Modals = {};
 exports.Init = async function(client)
 {
     client.on('interactionCreate', async i => {
+        let IsAuth = true;
+
+        // Maintenance Mode Logic
+        if (MAINTENANCE_MODE && (i.isChatInputCommand() || i.isButton() || i.isModalSubmit())) {
+            console.log("Authenticating... " + i.user.id);
+            console.log("List of Accepted Ids:");
+            console.log(MAINTENANCE_IDS);
+
+            if (MAINTENANCE_IDS.includes(i.user.id.toString())) {
+                console.log("USER AUTHENTICATED");
+
+                IsAuth = true;
+            } else {
+                console.log("USER FAILED AUTHENTICATION.");
+
+                IsAuth = false;
+            }
+        }
+
+        
+        console.log("\nNew Interaction with User " + i.user.tag);
 
         // Command Inputs
-        if (i.isChatInputCommand()) {
+        if (i.isChatInputCommand() && IsAuth) {
             let CommandData = Container.Commands[i.commandName];
 
             if (CommandData != null) {
@@ -35,7 +57,7 @@ exports.Init = async function(client)
         }
 
         // Button Inputs
-        if (i.isButton()) {
+        if (i.isButton() && IsAuth) {
             let ButtonData = Container.Buttons[i.customId];
 
             if (ButtonData != null) {
@@ -58,7 +80,7 @@ exports.Init = async function(client)
         }
 
         // Modal Inputs
-        if (i.isModalSubmit()) {
+        if (i.isModalSubmit() && IsAuth) {
             let ModalData = Container.Modals[i.customId];
 
             if (ModalData != null) {
@@ -79,6 +101,9 @@ exports.Init = async function(client)
                 ], i);
             }
         }
+
+        // Maintnence Mode Auth Message
+        if (!IsAuth) { i.reply({content: "I am currently in maintenance mode. Sorry.", ephemeral: true}); }
     });
 }
 

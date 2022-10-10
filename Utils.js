@@ -95,6 +95,24 @@ exports.PStore_Get = async function(ArrayName, DataIndexer)
 }
 
 /**
+ * 
+ * @param {String} ArrayName 
+ */
+exports.PStore_GetEntire = async function(ArrayName)
+{
+    let path = `./_PersistentStorage/${ArrayName}.json`;
+
+    if (fs.existsSync(path)) {
+        let JSONFile = fs.readFileSync(path)
+        let JArray = JSON.parse(JSONFile);
+
+        if (JArray != null) {
+            return JArray;
+        } else { return null; }
+    } else { return null; }
+}
+
+/**
  * @param {String} ArrayName 
  * @param {Any} DataIndexer
  * @param {Array} DataValue

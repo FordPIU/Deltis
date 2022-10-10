@@ -2,7 +2,7 @@
 const { Client, GatewayIntentBits } = require('discord.js');
 const fs = require("fs");
 
-const { token, guildId } = require('./Config.json');
+const { token, guildId, MAINTENANCE_MODE } = require('./Config.json');
 
 const InitFolders = [
 	"./Managers",
@@ -19,7 +19,7 @@ const client = new Client({
 });
 
 // Init File Funct
-async function InitFile(FPath, client)
+function InitFile(FPath, client)
 {
 	let File = require(FPath);
 
@@ -33,6 +33,8 @@ client.once('ready', () => {
 	console.log('Bot Logged In.');
 
 	// Guild Check
+	console.log("\nValidating Servers...");
+
 	let GuildList = client.guilds.cache;
 
 	GuildList.forEach(guild => {
@@ -45,7 +47,11 @@ client.once('ready', () => {
 		}
 	});
 
+	console.log("Servers Validated.");
+
 	// Init Extra Files
+	console.log("\nInitializing Files...");
+
 	InitFolders.forEach(DPath => {
 		let FNames = fs.readdirSync(DPath);
 
@@ -87,8 +93,15 @@ client.once('ready', () => {
 		}
 	});
 
+	console.log("Initialized Validated.\n");
+
 	// Rich Presence
-	client.user.setPresence({activities: [{name: "Watching for applications..."}]});
+	if (MAINTENANCE_MODE) {
+		client.user.setPresence({activities: [{name: "!! DOWN FOR MAINTENANCE !!"}]});
+		console.log("!! MAINTNENCE MODE ON !!");
+	} else {
+		client.user.setPresence({activities: [{name: "Watching for Applications.."}]});
+	}
 });
 
 // Login to Discord with your client's token
