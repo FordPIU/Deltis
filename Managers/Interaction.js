@@ -7,6 +7,7 @@ let Container = {};
 Container.Commands = {};
 Container.Buttons = {};
 Container.Modals = {};
+Container.SMenus = {};
 
 exports.Init = async function(client)
 {
@@ -93,6 +94,29 @@ exports.Init = async function(client)
                 } else {
                     U.EHError(1, 5,[
                         {ToReplace: "__MODALNAME__", Replace: ModalData.EName},
+                    ], i);
+                }
+            } else {
+                U.EHError(1, 4,[
+                    {ToReplace: "__MODALNAME__", Replace: i.customId},
+                ], i);
+            }
+        }
+
+        // Select Menu
+        if (i.isSelectMenu() && IsAuth) {
+            let SMenuData = Container.SMenus[i.customId];
+
+            if (SMenuData != null) {
+                let BFPath = SMenuData.FIPath;
+
+                if (fs.existsSync(BFPath)) {
+                    require(BFPath)[SMenuData.FName](i, client);
+
+                    console.log(`User ${i.user.tag} selected menu ${SMenuData.EName} option ${i.values}`);
+                } else {
+                    U.EHError(1, 5,[
+                        {ToReplace: "__MODALNAME__", Replace: SMenuData.EName},
                     ], i);
                 }
             } else {

@@ -22,10 +22,10 @@ const commands = [
 
 
 	//		SETUP COMMANDS		\\
-	// Setup Channel Command
+	// Setup Info Channel
 	new SlashCommandBuilder()
-	.setName('setupchannel')
-	.setDescription('Set up a channel.')
+	.setName('setupinfo')
+	.setDescription('Set up a info channel.')
 	.setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
 	.addStringOption(option => option
 		.setName('type')
@@ -35,6 +35,16 @@ const commands = [
 			{ name: 'Info / Non-Members', value: 'infon' },
 			{ name: 'Info / Members', value: 'infom' },
 		))
+	.addChannelOption(option => option
+		.setName('channel')
+		.setDescription('Channel to setup.')
+		.setRequired(true)),
+
+	// Setup FAQ Channel
+	new SlashCommandBuilder()
+	.setName('setupfaq')
+	.setDescription('Set up a FAQ channel.')
+	.setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
 	.addChannelOption(option => option
 		.setName('channel')
 		.setDescription('Channel to setup.')

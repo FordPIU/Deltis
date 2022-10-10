@@ -2,7 +2,7 @@ const { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } = require('
 const IRegistry = require("../Managers/Interaction");
 const { guildId, serverActiveChannel } = require("../Config.json");
 const U = require("../Utils");
-const EmbedVersion = 2;
+const EmbedVersion = 3;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -84,8 +84,8 @@ async function CacheValue(valueName)
 
         let embed = new EmbedBuilder()
         .setColor([100, 100, 100])
-        .setTitle('Off-Branch Roleplay')
-        .setAuthor({ name: 'Useful Server Information', iconURL: 'https://cdn.discordapp.com/attachments/992961900323274762/1027336886500466688/9.png' })
+        .setTitle('Server Information')
+        .setAuthor({ name: 'Off-Branch Roleplay', iconURL: 'https://cdn.discordapp.com/attachments/992961900323274762/1027336886500466688/9.png' })
         .setThumbnail('https://cdn.discordapp.com/attachments/992961900323274762/1027336886500466688/9.png')
         .addFields(
             { name: 'Server IP: ',              value: ServerInfo.ServerIP },
