@@ -1,5 +1,5 @@
 const { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } = require('discord.js');
-const IRegistry = require("../Managers/Interaction");
+const IRegistry = require("../Events/Interaction");
 const { guildId, serverActiveChannel } = require("../Config.json");
 const U = require("../Utils");
 const EmbedVersion = 3;

@@ -1,5 +1,5 @@
 const { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } = require('discord.js');
-const IRegistry = require("../Managers/Interaction");
+const IRegistry = require("../Events/Interaction");
 
 exports.Init = async function()
 {
@@ -79,7 +79,7 @@ exports.Call = async function(interaction)
             .addFields(
                 { name: '\u200B', value: '\u200B' },
                 { name: 'Running on QBCore', value: 'With a realistic economy, but in a non-grindy nature.\nWith plenty of idle income sources, not requiring you to be on.\n' },
-                { name: 'Character Based', value: 'Everything is character based, with every characting being a civilian at it\'s core.\nHave character in LSPD, and a character in BCSO. Get a character fired from 1 LEO Department, but not the other.\nOnly Discord & Server Rules apply to you and not your characters. (This sentence sucked -Buffy)\n' },
+                { name: 'Character Based', value: 'Everything is character based, with every characting being a civilian at it\'s core.\nHave character in LSPD, and a character in BCSO. Get a character fired from 1 LEO Department, but not the other.\n' },
                 { name: 'Utilizing CR-GSW', value: 'For a realistic medical experience, simulating wounds in their entirety.\nIncluding Character Perma-Death, to keep you on your toes.' },
                 { name: 'Utilizing FivePD & CR-Scenarios', value: 'Unperdictable AI, giving Law Enforcement pursuits that are never the same.' },
                 { name: '\nGovernment & Elections', value: 'Governor & Sheriff are elected positions, with Chief of Police and State Patrol Director being appointed.\nEvery character gets a vote, ensuring fair election cycles.' },

@@ -5,7 +5,7 @@ const fs = require("fs");
 const { token, guildId, MAINTENANCE_MODE } = require('./Config.json');
 
 const InitFolders = [
-	"./Managers",
+	"./Events",
 	"./Buttons",
 	"./Commands",
 ]
