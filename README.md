@@ -11,8 +11,9 @@
 ---
 
 ### Todo
-- [ ] Reorganize & Rewrite Login.
-- [ ] Commands & Buttons need to be combined.
-- [ ] Utils needs to be split.
+- [ ] Reorganize & Rewrite backend, to properly modularize.
+- [ ] Commands & Buttons need to be combined into a "Interaction" folder.
+- [ ] Events/Interaction need to be moved to the above folder, as Manager.mjs (mjs standing for Manager JS, for Registry to read)
+- [ ] Utils needs to be turned into a folder, to properly modularize.
 - [ ] Off-Branch RP Features need to be separated.
-- [ ] For Off-Branch RP, rewrite applications to create a channel when a new user joins, and properly walk and talk them threw everything.
+- [ ] For Off-Branch RP, rewrite applications to create a channel when a new channel when a user joins, and talks to them, properly walking them threw the application in a conversational style.
