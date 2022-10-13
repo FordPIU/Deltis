@@ -1,0 +1,32 @@
+{
+    "Bot": {
+        "Branch": "Development",
+        "Stable": {
+            "clientId": "1025567784324841593",
+            "token": "MTAyNTU2Nzc4NDMyNDg0MTU5Mw.Gztes9.Woif7L-jBITGQBfex6I0keNl-0qUxlVuvnU8-E"
+        },
+        "Development": {
+            "clientId": "1030215495015739442",
+            "token": "MTAzMDIxNTQ5NTAxNTczOTQ0Mg.GQ9mcP.D2vlVBtIVPuufu7pwQAeaJs8ifJQ4sHC61faf4",
+            "combine": "Stable"
+        }
+    },
+
+    "Maintenance_Mode": {
+        "enabled": false,
+        "allowedIds": ["226464874518020096"]
+    },
+    "Exclusive_Mode": {
+        "enabled": true,
+        "allowedIds": ["846860738919137281", "938199070760132608"]
+    },
+
+    "Custom_Guilds": {
+        "OffBranchRP": {
+            "id": "846860738919137281",
+            "appsChannel": "1012285573232341032",
+            "serverActiveChannel": "1019659552704180254",
+            "appAcceptRoleGrant": "1000103855129903264"
+        }
+    }
+}

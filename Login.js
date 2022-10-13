@@ -1,16 +1,10 @@
-// Require the necessary discord.js classes
-const { Client, GatewayIntentBits } = require('discord.js');
-const fs = require("fs");
+// Import all Requirements
+const { Client, GatewayIntentBits, } 	= 	require("discord.js");
+const fs 								= 	require("fs");
+const _CFG 								= 	require("./Settings/Base.json");
+const _UTIL 							= 	require("./Utilities/_Init");
 
-const { token, guildId, MAINTENANCE_MODE } = require('./Config.json');
-
-const InitFolders = [
-	"./Events",
-	"./Buttons",
-	"./Commands",
-]
-
-// Create a new client instance
+// Create the Client with Intents
 const client = new Client({
 	intents: [
 		GatewayIntentBits.Guilds,
@@ -18,94 +12,68 @@ const client = new Client({
 	]
 });
 
-// Init File Funct
-function InitFile(FPath, client)
-{
-	let File = require(FPath);
-
-	File.Init(client);
-
-	console.log("Inited File: " + FPath);
-}
-
 // Wait for Client to be logged in and ready
-client.once('ready', () => {
-	console.log('Bot Logged In.');
+client.once("ready", () => {
+	_UTIL.Logger.s("Logged In.");
 
-	// Guild Check
-	console.log("\nValidating Servers...");
 
-	let GuildList = client.guilds.cache;
+	// Exclusive Mode Handle
+	if (_CFG.Exclusive_Mode.enabled) {
+		// Send Log Msg
+		_UTIL.Logger.s("Exclusive Mode is Enabled.", ["Red", "Blink", "Bright", "Underscore", "NewLine"]);
+		_UTIL.Logger.s("Validating Servers...", ["Yellow", "BlockBelow"]);
 
-	GuildList.forEach(guild => {
-		if (!guild.id == guildId) {
-			guild.leave()
-				.then(console.log(`Invalid Server: ${guild.name}`))
-				.catch(console.error);
-		} else {
-			console.log(`Validated Server: ${guild.name}`);
-		}
-	});
+		// Get Guild List & Accepted Guilds
+		let BGuilds = client.guilds.cache;
+		let AGuilds = _CFG.Exclusive_Mode.allowedIds;
 
-	console.log("Servers Validated.");
-
-	// Init Extra Files
-	console.log("\nInitializing Files...");
-
-	InitFolders.forEach(DPath => {
-		let FNames = fs.readdirSync(DPath);
-
-		for (const FName of FNames)
-		{
-			let FPath = `${DPath}/${FName}`;
-
-			if (FName.includes(".js")) {
-				InitFile(FPath, client);
+		// ForEach Guild Check
+		BGuilds.forEach(guild => {
+			if (!AGuilds.includes(guild.id.toString())) {
+				//guild.leave()
+				_UTIL.Logger.s(`	Invalid Server:   ${guild.name} (${guild.id})`, ["Red"]);
 			} else {
-				// Go 1 folder deeper
-				let FNames2 = fs.readdirSync(FPath);
-
-				for (const FName2 of FNames2)
-				{
-					let FPath2 = `${FPath}/${FName2}`;
-
-					if (FName2.includes(".js")) {
-						InitFile(FPath2, client);
-					} else {
-						// Go 2 folders deeper
-						let FNames3 = fs.readdirSync(FPath2);
-
-						for (const FName3 of FNames3)
-						{
-							let FPath3 = `${FPath2}/${FName3}`;
-
-							if (FName3.includes(".js")) {
-								InitFile(FPath3, client);
-							} else {
-								// Go 3 folders deeper
-
-								// Unneeded for now.
-							}
-						}
-					}
-				}
+				_UTIL.Logger.s(`	Validated Server: ${guild.name} (${guild.id})`, ["Green"]);
 			}
-		}
-	});
+		});
 
-	console.log("Initialized Validated.\n");
+		// Log Completion
+		_UTIL.Logger.s("Completed Validation.", ["Yellow", "BlockAbove"]);
+	} else { _UTIL.Logger.s("Exclusive Mode is Disabled.", ["Green", "Bright", "Underscore", "NewLine"]); }
 
-	// Rich Presence
-	if (MAINTENANCE_MODE) {
-		client.user.setPresence({activities: [{name: "!! DOWN FOR MAINTENANCE !!"}]});
-		console.log("!! MAINTNENCE MODE ON !!");
+	// Maintenance Mode Check, for logging and presence.
+	if (_CFG.Maintenance_Mode.enabled) {
+		_UTIL.Logger.s("Maintenance Mode is Enabled.", ["Red", "Blink", "Bright", "Underscore", "NewLine"]);
+		client.user.setPresence({activities: [{name: "!! Commands Disabled for Maintenance !!"}]});
 	} else {
-		client.user.setPresence({activities: [{name: "Watching for Applications.."}]});
+		_UTIL.Logger.s("Maintenance Mode is Disabled.", ["Green", "Bright", "Underscore", "NewLine"]);
+		client.user.setPresence({activities: [{name: "This is a bot."}]});
 	}
+
+
+	// Initialize Files
+	_UTIL.Logger.s("Initializing Files...", ["NewLine", "Yellow", "BlockBelow"]);
+	let Files = _UTIL.Files.GetAllWithExtension(".", ".i.js", true);
+	
+	Files.forEach(FilePath => {
+		require(FilePath).Init(client, _CFG.Maintenance_Mode.enabled, _CFG.Maintenance_Mode.allowedIds);
+		_UTIL.Logger.s(`	Initialized File ${FilePath}`, ["White", "Bright"]);
+	});
+	_UTIL.Logger.s("Completed Initializing Files.", ["Yellow", "BlockAbove"]);
+
+	// Initialize Managers
+	_UTIL.Logger.s("Initializing Managers...", ["NewLine", "Yellow", "BlockBelow"]);
+	let Managers = _UTIL.Files.GetAllWithExtension(".", ".m.js", true);
+	
+	Managers.forEach(FilePath => {
+		require(FilePath).Init(client, _CFG.Maintenance_Mode.enabled, _CFG.Maintenance_Mode.allowedIds);
+		_UTIL.Logger.s(`	Initialized Manager ${FilePath}`, ["White", "Bright"]);
+	});
+	_UTIL.Logger.s("Completed Initializing Managers.", ["Yellow", "BlockAbove"]);
 });
 
-// Login to Discord with your client's token
-client.login(token);
+// Login Call with Token
+client.login(_CFG.Bot[_CFG.Bot.Branch].token);
 
 // Export Client
 module.exports = function() { return client; }

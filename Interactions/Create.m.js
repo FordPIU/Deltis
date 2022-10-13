@@ -1,6 +1,5 @@
-const fs = require("fs");
-const U = require("../Utils");
-const { MAINTENANCE_MODE, MAINTENANCE_IDS } = require("../Config.json")
+const fs        =   require("fs");
+const _UTIL     =   require("../Utilities/_Init");
 
 
 let Container = {};
@@ -9,30 +8,18 @@ Container.Buttons = {};
 Container.Modals = {};
 Container.SMenus = {};
 
-exports.Init = async function(client)
+exports.Init = async function(client, MAINTENANCE_MODE, MAINTENANCE_IDS)
 {
     client.on('interactionCreate', async i => {
         let IsAuth = true;
 
         // Maintenance Mode Logic
-        if (MAINTENANCE_MODE && (i.isChatInputCommand() || i.isButton() || i.isModalSubmit())) {
-            console.log("Authenticating... " + i.user.id);
-            console.log("List of Accepted Ids:");
-            console.log(MAINTENANCE_IDS);
-
-            if (MAINTENANCE_IDS.includes(i.user.id.toString())) {
-                console.log("USER AUTHENTICATED");
-
-                IsAuth = true;
-            } else {
-                console.log("USER FAILED AUTHENTICATION.");
-
-                IsAuth = false;
-            }
+        if (MAINTENANCE_MODE && (i.isChatInputCommand() || i.isButton() || i.isModalSubmit() || i.isSelectMenu())) {
+            if (MAINTENANCE_IDS.includes(i.user.id.toString())) { IsAuth = true; }
+            else { IsAuth = false; }
         }
 
-        
-        console.log("\nNew Interaction with User " + i.user.tag);
+        _UTIL.Logger.s(`New Interaction with ${i.user.tag}`, ["NewLine", "BlockAbove", "Magenta"]);
 
         // Command Inputs
         if (i.isChatInputCommand() && IsAuth) {
@@ -44,14 +31,14 @@ exports.Init = async function(client)
                 if (fs.existsSync(CFPath)) {
                     require(CFPath)[CommandData.FName](i, client);
 
-                    console.log(`User ${i.user.tag} executed Command ${CommandData.EName}`);
+                    _UTIL.Logger.s(`User ${i.user.tag} executed Command ${CommandData.EName}`);
                 } else {
-                    U.EHError(1, 1,[
+                    _UTIL.Logger.err(1, 1,[
                         {ToReplace: "__COMMANDNAME__", Replace: CommandData.EName},
                     ], i);
                 }
             } else {
-                U.EHError(1, 0,[
+                _UTIL.Logger.err(1, 0,[
                     {ToReplace: "__COMMANDNAME__", Replace: i.commandName},
                 ], i);
             }
@@ -67,14 +54,14 @@ exports.Init = async function(client)
                 if (fs.existsSync(BFPath)) {
                     require(BFPath)[ButtonData.FName](i, client);
 
-                    console.log(`User ${i.user.tag} clicked Button ${ButtonData.EName}`);
+                    _UTIL.Logger.s(`User ${i.user.tag} clicked Button ${ButtonData.EName}`);
                 } else {
-                    U.EHError(1, 3,[
+                    _UTIL.Logger.err(1, 3,[
                         {ToReplace: "__BUTTONNAME__", Replace: ButtonData.EName},
                     ], i);
                 }
             } else {
-                U.EHError(1, 2,[
+                _UTIL.Logger.err(1, 2,[
                     {ToReplace: "__BUTTONNAME__", Replace: i.customId},
                 ], i);
             }
@@ -90,14 +77,14 @@ exports.Init = async function(client)
                 if (fs.existsSync(BFPath)) {
                     require(BFPath)[ModalData.FName](i, client);
 
-                    console.log(`User ${i.user.tag} submitted Modal ${ModalData.EName}`);
+                    _UTIL.Logger.s(`User ${i.user.tag} submitted Modal ${ModalData.EName}`);
                 } else {
-                    U.EHError(1, 5,[
+                    _UTIL.Logger.err(1, 5,[
                         {ToReplace: "__MODALNAME__", Replace: ModalData.EName},
                     ], i);
                 }
             } else {
-                U.EHError(1, 4,[
+                _UTIL.Logger.err(1, 4,[
                     {ToReplace: "__MODALNAME__", Replace: i.customId},
                 ], i);
             }
@@ -113,14 +100,14 @@ exports.Init = async function(client)
                 if (fs.existsSync(BFPath)) {
                     require(BFPath)[SMenuData.FName](i, client);
 
-                    console.log(`User ${i.user.tag} selected menu ${SMenuData.EName} option ${i.values}`);
+                    _UTIL.Logger.s(`User ${i.user.tag} selected menu ${SMenuData.EName} option ${i.values}`);
                 } else {
-                    U.EHError(1, 5,[
+                    _UTIL.Logger.err(1, 5,[
                         {ToReplace: "__MODALNAME__", Replace: SMenuData.EName},
                     ], i);
                 }
             } else {
-                U.EHError(1, 4,[
+                _UTIL.Logger.err(1, 4,[
                     {ToReplace: "__MODALNAME__", Replace: i.customId},
                 ], i);
             }
@@ -141,7 +128,7 @@ exports.Init = async function(client)
  */
 exports.RegisterInteraction = async function(IType, ICommandName, ECommandName, FilePath, ExecFunct)
 {
-    if (Container[IType] == null) { console.log(`Failed to Register ${ICommandName}, invalid IType ${IType}`); return; }
+    if (Container[IType] == null) { _UTIL.Logger.s(`Failed to Register ${ICommandName}, invalid IType ${IType}`); return; }
 
     Container[IType][ICommandName] = {
         EName: ECommandName,
@@ -149,5 +136,5 @@ exports.RegisterInteraction = async function(IType, ICommandName, ECommandName, 
         FIPath: FilePath
     };
 
-    console.log("Registered " + IType + ": " + ICommandName);
+    _UTIL.Logger.s("Registered " + IType + ": " + ICommandName, ["Dim"]);
 }

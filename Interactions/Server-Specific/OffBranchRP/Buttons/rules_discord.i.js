@@ -1,5 +1,5 @@
 const { EmbedBuilder } = require('discord.js');
-const IRegistry = require("../Managers/Interaction");
+const IRegistry = require("../Wrapper").Create;
 
 exports.Init = async function()
 {

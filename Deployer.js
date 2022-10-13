@@ -1,10 +1,11 @@
 const { SlashCommandBuilder, Routes, PermissionFlagsBits } = require('discord.js');
 const { REST } = require('@discordjs/rest');
 
-const { clientId, token } = require('./Config.json');
+const _CFG = require("./Settings/Base.json");
 
-async function Init() {
-const commands = [
+async function Init(){
+const Commands = {};
+Commands.Stable = [
 	//		SERVER COMMANDS		\\
 	// Set Server Info
 	new SlashCommandBuilder()
@@ -50,25 +51,43 @@ const commands = [
 		.setDescription('Channel to setup.')
 		.setRequired(true))
 ]
-.map(command => command.toJSON());
+.map(public_command => public_command.toJSON());
 
-// Reset Command List, Thanks discord, doesn't work. Like always.
-const rest = new REST({ version: '10' }).setToken(token);
+Commands.Development = [
 
-await rest.put(Routes.applicationCommands(clientId), { body: [] })
-	.then(() => console.log('Deleted Previously Registered Commands.'))
-	.catch(console.error);
+]
+.map(private_command => private_command.toJSON());
 
-await rest.put(
-	Routes.applicationCommands(clientId),
-	{ body: commands },
-);
+for (let [BranchType, BotVal] of Object.entries(_CFG.Bot)) {
+	if( typeof(BotVal) == "object" ) {
+		let clientId = BotVal.clientId;
+		let token = BotVal.token;
+		let commands = Commands[BranchType];
+		let combine = BotVal.combine;
 
-// Log.
-console.log("Registerd " + commands.length + " Commands.");
-}
-Init();
+		if (combine != null) {
+			let combine_commands = Commands[BotVal.combine];
+			let previous_commands = commands;
+			
+			commands = Object.assign(previous_commands, combine_commands);
+		}
 
+		const rest = new REST({ version: '10' }).setToken(token);
+
+		await rest.put(Routes.applicationCommands(clientId), { body: [] })
+			.then(() => console.log('Deleted Previously Registered Commands.'))
+			.catch(console.error);
+
+		await rest.put(
+			Routes.applicationCommands(clientId),
+			{ body: commands },
+		);
+
+		// Log.
+		console.log("Registerd " + commands.length + " " + BranchType + " Commands.");
+	}
+};
+} Init();
 
 /*
 	>	node Deployer.js

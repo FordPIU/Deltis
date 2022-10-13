@@ -1,7 +1,8 @@
 const { ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, ButtonBuilder, ButtonStyle, EmbedBuilder } = require('discord.js');
-const { guildId, appsChannel, appAcceptRoleGrant } = require("../Config.json");
-const IRegistry = require("../Managers/Interaction");
-const U = require("../Utils")
+const _CFG = require("../Wrapper").Config.Custom_Guilds.OffBranchRP;
+const { guildId, appsChannel, appAcceptRoleGrant } = _CFG;
+const IRegistry = require("../Wrapper").Create;
+const PStore = require("../Wrapper").Utils.PStore
 
 let UserApplicationData = {};
 
@@ -70,12 +71,12 @@ exports.CallPt1Start = async function(interaction)
 {
     UserApplicationData[interaction.user.id] = {};
 
-    let BlacklistData = await U.PStore_Get("MembershipBlacklist", interaction.user.id)
+    let BlacklistData = await PStore.Get("MembershipBlacklist", interaction.user.id)
     let CurrentEpoch = Math.round(Date.now() / 1000);
 
     if (BlacklistData == null || (BlacklistData.Waiting == null && BlacklistData.EndTime < CurrentEpoch))
     {
-        if (BlacklistData != null) { U.PStore_Remove("MembershipBlacklist", interaction.user.id); }
+        if (BlacklistData != null) { PStore.Remove("MembershipBlacklist", interaction.user.id); }
 
         const modal = new ModalBuilder()
             .setCustomId('membershipapp_pt1_submit')
@@ -283,7 +284,7 @@ exports.CallPt2Submit = async function(interaction, client)
     message.startThread({name: `Discuss ${interaction.user.tag}'s Application.`});
 
     // Store Persistent Var
-    U.PStore_Set("MembershipBlacklist", IUserId, {Waiting: true});
+    PStore.Set("MembershipBlacklist", IUserId, {Waiting: true});
 }
 
 exports.CallAcceptReason = async function(interaction)
@@ -357,7 +358,7 @@ exports.CallAccept = async function(interaction, client)
     User.roles.add(appAcceptRoleGrant, "Application Accepted.");
 
     // Remove Hold
-    U.PStore_Remove("MembershipBlacklist", UserId)
+    PStore.Remove("MembershipBlacklist", UserId)
 }
 
 exports.CallDeny = async function(interaction, client)
@@ -385,5 +386,5 @@ exports.CallDeny = async function(interaction, client)
 
     // Blacklist from Further Application Submissions for 2 Days.
     let ETime = Math.round(Date.now() / 1000) + 172800;
-    U.PStore_Set("MembershipBlacklist", UserId, {EndTime: ETime});
+    PStore.Set("MembershipBlacklist", UserId, {EndTime: ETime});
 }

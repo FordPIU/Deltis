@@ -1,7 +1,8 @@
 const { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } = require('discord.js');
-const IRegistry = require("../Events/Interaction");
-const { guildId, serverActiveChannel } = require("../Config.json");
-const U = require("../Utils");
+const IRegistry = require("../Wrapper").Create;
+const _C = require("../Wrapper").Config;
+const _CFG = _C.Custom_Guilds.OffBranchRP;
+const PStore = require("../Wrapper").Utils.PStore;
 const EmbedVersion = 3;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -27,12 +28,12 @@ function ServerActivityString(bool)
 
 async function GetMessageId(channel, message_content)
 {
-    let PMessageId = await U.PStore_Get("ServerActivity", "MessageId");
+    let PMessageId = await PStore.Get("ServerActivity", "MessageId");
 
     if (PMessageId == null) {
         let Message = await channel.send(message_content);
 
-        U.PStore_Set("ServerActivity", "MessageId", Message.id);
+        PStore.Set("ServerActivity", "MessageId", Message.id);
 
         PMessageId = Message.id;
     }
@@ -50,16 +51,16 @@ async function CacheValue(valueName)
 
         switch(ValueName) {
             case "client":
-                CacheStorage.client = require("../Login")();
+                CacheStorage.client = require("../Wrapper").Client();
 
             case "guild":
                 let IClient = await CacheValue("client");
-                CacheStorage.guild = await IClient.guilds.fetch(guildId);
+                CacheStorage.guild = await IClient.guilds.fetch(_CFG.id);
                 break;
 
             case "channel":
                 let IGuild = await CacheValue("guild");
-                CacheStorage.channel = await IGuild.channels.fetch(serverActiveChannel);
+                CacheStorage.channel = await IGuild.channels.fetch(_CFG.serverActiveChannel);
                 break;
 
             case "message":
@@ -112,7 +113,7 @@ async function IUpdateMessage()
 
 async function IPingList()
 {
-    let PMUsers = await U.PStore_GetEntire("ServerActivityNotifys")
+    let PMUsers = await PStore.GetEntire("ServerActivityNotifys")
     let CChannel = await CacheValue("channel");
 
     if (PMUsers != null && Object.keys(PMUsers).length > 0) {
@@ -148,6 +149,7 @@ exports.Init = async function()
     );
 
     // Setup Channel
+    if (_C.Bot.Branch != "Stable") { return; }
     let channel = await CacheValue("Channel");
     let message = await CacheValue("Message");
     let message_content = await CacheValue("message_content");
@@ -155,19 +157,19 @@ exports.Init = async function()
     if (message == null) {
         message = await channel.send(message_content);
 
-        U.PStore_Set("ServerActivity", "MessageId", message.id);
+        PStore.Set("ServerActivity", "MessageId", message.id);
     } else {
         message.edit(message_content);
     }
 
     // Check for a Update
-    let PEmbedVersion = await U.PStore_Get("ServerActivity", "EmbedVersion");
+    let PEmbedVersion = await PStore.Get("ServerActivity", "EmbedVersion");
 
     if (PEmbedVersion == null || PEmbedVersion != EmbedVersion) {
         console.log("Updating Server Information Embed to Version #" + EmbedVersion);
         message.edit(message_content);
 
-        U.PStore_Set("ServerActivity", "EmbedVersion", EmbedVersion);
+        PStore.Set("ServerActivity", "EmbedVersion", EmbedVersion);
     }
 }
 
@@ -194,15 +196,15 @@ exports.SetServerInfo = async function(interaction)
 exports.TogglePings = async function(interaction)
 {
     let IUserId = interaction.user.id;
-    let PTog = await U.PStore_Get("ServerActivityNotifys", IUserId);
+    let PTog = await PStore.Get("ServerActivityNotifys", IUserId);
 
     if (PTog == null || PTog == false) {
         interaction.reply({content: "You will now recieve Activity Notifications.", ephemeral: true});
 
-        U.PStore_Set("ServerActivityNotifys", IUserId, true);
+        PStore.Set("ServerActivityNotifys", IUserId, true);
     } else {
         interaction.reply({content: "You will no longer get Activity Notifications.", ephemeral: true});
 
-        U.PStore_Remove("ServerActivityNotifys", IUserId);
+        PStore.Remove("ServerActivityNotifys", IUserId);
     }
 }

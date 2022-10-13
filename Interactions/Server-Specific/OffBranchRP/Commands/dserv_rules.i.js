@@ -1,5 +1,5 @@
 const { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } = require('discord.js');
-const IRegistry = require("../Events/Interaction");
+const IRegistry = require("../Wrapper").Create;
 
 exports.Init = async function()
 {
