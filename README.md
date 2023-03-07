@@ -1,3 +1,6 @@
+# Project Abandoned
+## Token was reset, don't bother.
+
 # An Advanced Multi-Feature Discord Bot
 ## With Special Purpose Built Features for Off-Branch Roleplay
 
